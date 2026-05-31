@@ -4,6 +4,7 @@ import {
   IsNumber,
   IsString,
   IsDateString,
+  IsOptional,
 } from 'class-validator';
 import {
   TransactionCategory,
@@ -29,8 +30,8 @@ export class CreateTransactionDto {
   category!: TransactionCategory;
 
   @IsEnum(TransactionSubcategory)
-  @IsNotEmpty()
-  subcategory!: TransactionSubcategory;
+  @IsOptional()
+  subcategory?: TransactionSubcategory;
 
   @IsEnum(TransactionSource)
   @IsNotEmpty()

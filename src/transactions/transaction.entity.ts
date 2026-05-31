@@ -72,6 +72,7 @@ export class Transaction {
   @Column({
     type: 'enum',
     enum: TransactionSubcategory,
+    nullable: true
   })
   subcategory!: TransactionSubcategory;
 

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Transaction } from './transaction.entity';
+import { Transaction, TransactionSource } from './transaction.entity';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 
@@ -15,6 +15,17 @@ export class TransactionsService {
   async create(dto: CreateTransactionDto): Promise<Transaction> {
     const transaction = this.transactionRepository.create(dto);
     return this.transactionRepository.save(transaction);
+  }
+
+  async findDuplicate(
+    description: string,
+    amount: number,
+    date: string,
+    source: TransactionSource,
+  ): Promise<Transaction | null> {
+    return this.transactionRepository.findOne({
+      where: { description, amount, date, source },
+    });
   }
 
   async findAll(): Promise<Transaction[]> {

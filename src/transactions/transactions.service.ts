@@ -31,10 +31,7 @@ export class TransactionsService {
     return transaction;
   }
 
-  async update(
-    id: string,
-    dto: UpdateTransactionDto,
-  ): Promise<Transaction> {
+  async update(id: string, dto: UpdateTransactionDto): Promise<Transaction> {
     const transaction = await this.findOne(id);
     Object.assign(transaction, dto);
     return this.transactionRepository.save(transaction);

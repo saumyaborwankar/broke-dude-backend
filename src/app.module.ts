@@ -4,8 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { getDatabaseConfig } from './config/database.config';
-import { UsersModule } from './users/users.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { PdfProcessingModule } from './pdf-processing/pdf-processing.module';
 
 @Module({
   imports: [
@@ -14,8 +14,8 @@ import { TransactionsModule } from './transactions/transactions.module';
       inject: [ConfigService],
       useFactory: getDatabaseConfig,
     }),
-    UsersModule,
     TransactionsModule,
+    PdfProcessingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Between, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { Transaction, TransactionSource } from './transaction.entity';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
@@ -28,8 +28,29 @@ export class TransactionsService {
     });
   }
 
-  async findAll(): Promise<Transaction[]> {
-    return this.transactionRepository.find({ order: { date: 'DESC' } });
+  async findAll(filters?: {
+    startDate?: string;
+    endDate?: string;
+    source?: string;
+  }): Promise<Transaction[]> {
+    const where: any = {};
+
+    if (filters?.startDate && filters?.endDate) {
+      where.date = Between(filters.startDate, filters.endDate);
+    } else if (filters?.startDate) {
+      where.date = MoreThanOrEqual(filters.startDate);
+    } else if (filters?.endDate) {
+      where.date = LessThanOrEqual(filters.endDate);
+    }
+
+    if (filters?.source) {
+      where.source = filters.source;
+    }
+
+    return this.transactionRepository.find({
+      where,
+      order: { date: 'DESC' },
+    });
   }
 
   async findOne(id: string): Promise<Transaction> {

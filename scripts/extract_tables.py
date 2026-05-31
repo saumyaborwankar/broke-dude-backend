@@ -58,7 +58,7 @@ def _try_parse_transaction(text: str) -> dict | None:
 
     return {
         "description": description,
-        "amount": abs(amount),
+        "amount": amount,
         "date": date_part,
     }
 

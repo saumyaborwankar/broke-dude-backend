@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -22,8 +23,12 @@ export class TransactionsController {
   }
 
   @Get()
-  findAll(): Promise<Transaction[]> {
-    return this.transactionsService.findAll();
+  findAll(
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+    @Query('source') source?: string,
+  ): Promise<Transaction[]> {
+    return this.transactionsService.findAll({ startDate, endDate, source });
   }
 
   @Get(':id')

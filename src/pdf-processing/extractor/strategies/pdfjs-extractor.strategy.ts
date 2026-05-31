@@ -126,7 +126,7 @@ export class PdfJsExtractorStrategy implements ExtractorStrategy {
         continue;
       }
 
-      results.push({ description, date, amount: Math.abs(amount) });
+      results.push({ description, date, amount });
     }
 
     return results;

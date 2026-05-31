@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ExtractorEngine } from './extractor/extractor-engine';
 import { PdfPlumberExtractorStrategy } from './extractor/strategies/pdfplumber-extractor.strategy';
 import type { ExtractorStrategy } from './extractor/extractor-strategy.interface';
@@ -38,6 +38,7 @@ export interface CreateFromPdfResult {
 
 @Injectable()
 export class PdfProcessingService {
+  private readonly logger = new Logger(PdfProcessingService.name);
   private extractorEngine: ExtractorEngine;
   private categorizerEngine: CategorizerEngine;
 
@@ -112,6 +113,9 @@ export class PdfProcessingService {
 
       if (duplicate) {
         skipped++;
+        this.logger.warn(
+          `Skipped duplicate transaction: "${row.description}" $${row.amount} on ${row.date} (source: ${source})`,
+        );
         continue;
       }
 

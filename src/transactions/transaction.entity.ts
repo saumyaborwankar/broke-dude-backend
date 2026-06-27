@@ -26,6 +26,8 @@ export enum TransactionCategory {
   DOCTOR = 'Doctor',
   CAR = 'Car',
   GAS_UTILITY = 'Gas',
+  TOLL = 'Toll',
+  PARKING = 'parking',
 }
 
 export enum TransactionSubcategory {
@@ -37,6 +39,8 @@ export enum TransactionSubcategory {
   TRANSIT = 'Transit',
   OTHER = 'Other',
   SOUVENIR = 'Souvenir',
+  SHOPPING = 'Shopping',
+  LAUNDRY = 'laundry',
 }
 
 export enum TransactionSource {
@@ -81,6 +85,9 @@ export class Transaction {
     enum: TransactionSource,
   })
   source!: TransactionSource;
+
+  @Column({ type: 'text', nullable: true })
+  notes!: string;
 
   @CreateDateColumn()
   createdAt!: Date;

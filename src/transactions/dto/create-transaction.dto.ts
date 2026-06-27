@@ -36,4 +36,8 @@ export class CreateTransactionDto {
   @IsEnum(TransactionSource)
   @IsNotEmpty()
   source!: TransactionSource;
+
+  @IsString()
+  @IsOptional()
+  notes?: string;
 }

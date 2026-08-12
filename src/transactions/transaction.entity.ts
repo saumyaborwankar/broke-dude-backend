@@ -28,6 +28,7 @@ export enum TransactionCategory {
   GAS_UTILITY = 'Gas',
   TOLL = 'Toll',
   PARKING = 'parking',
+  DUMB_TAX = 'dumb tax',
 }
 
 export enum TransactionSubcategory {

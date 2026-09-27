@@ -19,6 +19,8 @@ export interface ProcessedRow {
   date: string;
   category: string;
   confidence: number;
+  subcategory?: string;
+  notes?: string;
 }
 
 export interface ProcessingResult {
@@ -73,6 +75,8 @@ export class PdfProcessingService {
       date: row.date,
       category: categorized[i].category,
       confidence: categorized[i].confidence,
+      subcategory: categorized[i].subcategory,
+      notes: categorized[i].notes,
     }));
 
     return {
@@ -102,7 +106,7 @@ export class PdfProcessingService {
 
     for (let i = 0; i < extractedRows.length; i++) {
       const row = extractedRows[i];
-      const category = categorized[i].category;
+      const { category, subcategory, notes } = categorized[i];
 
       const duplicate = await this.transactionsService.findDuplicate(
         row.description,
@@ -124,6 +128,8 @@ export class PdfProcessingService {
         amount: row.amount,
         date: row.date,
         category,
+        subcategory,
+        notes,
         source,
       });
 

@@ -2,7 +2,10 @@ import {
   CategorizerStrategy,
   CategorizationResult,
 } from '../../interfaces/categorizer-strategy.interface';
-import { TransactionCategory } from '../../../transactions/transaction.entity';
+import {
+  TransactionCategory,
+  TransactionSubcategory,
+} from '../../../transactions/transaction.entity';
 
 interface CategoryRule {
   category: TransactionCategory;
@@ -10,8 +13,46 @@ interface CategoryRule {
   keywords: string[];
 }
 
+// Checked before the generic rules; matches anywhere in the description.
+interface MerchantRule {
+  pattern: RegExp;
+  category: TransactionCategory;
+  subcategory?: TransactionSubcategory;
+  notes?: string;
+}
+
 export class RegexCategorizerStrategy implements CategorizerStrategy {
   readonly name = 'regex';
+
+  private merchantRules: MerchantRule[] = [
+    // Must precede the plain uber rule
+    { pattern: /uber\W*eats/i, category: TransactionCategory.EATING_OUT },
+    { pattern: /uber/i, category: TransactionCategory.UBER, notes: 'uber' },
+    { pattern: /lyft/i, category: TransactionCategory.UBER, notes: 'uber' },
+    {
+      pattern: /ezcater/i,
+      category: TransactionCategory.EATING_OUT,
+      notes: 'ezcater',
+    },
+    { pattern: /mbta/i, category: TransactionCategory.TRANSIT, notes: 'mbta' },
+    {
+      // WHOLEFDS is how Whole Foods often shows up on statements
+      pattern: /trader\s*joe|whole\s*(foods|fds)|\btarget\b/i,
+      category: TransactionCategory.W_RAIMA,
+      subcategory: TransactionSubcategory.GROCERY,
+      notes: 'grocery',
+    },
+    {
+      pattern: /geico/i,
+      category: TransactionCategory.CAR,
+      notes: 'insurance',
+    },
+    {
+      pattern: /grubhub/i,
+      category: TransactionCategory.W_RAIMA,
+      subcategory: TransactionSubcategory.EATING_OUT,
+    },
+  ];
 
   private rules: CategoryRule[] = [
     {
@@ -429,6 +470,17 @@ export class RegexCategorizerStrategy implements CategorizerStrategy {
   categorize(description: string, _amount: number): CategorizationResult {
     void _amount;
     const desc = description.trim();
+
+    for (const rule of this.merchantRules) {
+      if (rule.pattern.test(desc)) {
+        return {
+          category: rule.category,
+          confidence: 0.95,
+          ...(rule.subcategory && { subcategory: rule.subcategory }),
+          ...(rule.notes && { notes: rule.notes }),
+        };
+      }
+    }
 
     for (const rule of this.rules) {
       for (const pattern of rule.patterns) {

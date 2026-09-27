@@ -2,7 +2,6 @@ import type {
   CategorizerStrategy,
   CategorizationResult,
 } from '../interfaces/categorizer-strategy.interface';
-import { TransactionCategory } from '../../transactions/transaction.entity';
 
 export class CategorizerEngine {
   private strategy: CategorizerStrategy;
@@ -23,12 +22,9 @@ export class CategorizerEngine {
     return this.strategy.categorize(description, amount);
   }
 
-  categorizeBatch(rows: { description: string; amount: number }[]): Array<{
-    description: string;
-    amount: number;
-    category: TransactionCategory;
-    confidence: number;
-  }> {
+  categorizeBatch(
+    rows: { description: string; amount: number }[],
+  ): Array<{ description: string; amount: number } & CategorizationResult> {
     return rows.map((row) => {
       const result = this.categorize(row.description, row.amount);
       return { ...row, ...result };
